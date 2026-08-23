@@ -1,0 +1,147 @@
+
+Action: view_file({"path":"/app/design_guidelines.json"})
+Observation: [Showing lines 1-143 of 143 total] /app/design_guidelines.json:
+1|{
+2|  "app_name": "ViaAce Xpress",
+3|  "personality": "4 Tactile / Playful LIGHT",
+4|  "personality_one_liner": "A friendly, accessible, and fast logistics experience with tactile cards, rounded shapes, and clear bright yellow accents.",
+5|  "color": {
+6|    "surface": "#FFFFFF",
+7|    "onSurface": "#000000",
+8|    "surfaceSecondary": "#F5F5F5",
+9|    "onSurfaceSecondary": "#555555",
+10|    "surfaceTertiary": "#FFFBE6",
+11|    "onSurfaceTertiary": "#8F7700",
+12|    "surfaceInverse": "#1A1A1A",
+13|    "onSurfaceInverse": "#FFFFFF",
+14|    "brand": "#FFD60A",
+15|    "brandPrimary": "#FFD60A",
+16|    "onBrandPrimary": "#000000",
+17|    "brandSecondary": "#000000",
+18|    "onBrandSecondary": "#FFFFFF",
+19|    "brandTertiary": "#FFF5B8",
+20|    "onBrandTertiary": "#665500",
+21|    "success": "#34C759",
+22|    "onSuccess": "#FFFFFF",
+23|    "warning": "#FF9F0A",
+24|    "onWarning": "#000000",
+25|    "error": "#FF3B30",
+26|    "onError": "#FFFFFF",
+27|    "info": "#007AFF",
+28|    "onInfo": "#FFFFFF",
+29|    "border": "#E5E5E5",
+30|    "borderStrong": "#FFD60A",
+31|    "divider": "#F0F0F0"
+32|  },
+33|  "typography": {
+34|    "displayFontFamily": "Plus Jakarta Sans",
+35|    "textFontFamily": "Plus Jakarta Sans",
+36|    "scale": {
+37|      "sm": 12,
+38|      "base": 14,
+39|      "lg": 16,
+40|      "xl": 20,
+41|      "2xl": 24
+42|    }
+43|  },
+44|  "spacing": {
+45|    "rule": "Generous tactile padding. Use md/lg for general gaps, xl for section breaks.",
+46|    "xs": 4,
+47|    "sm": 8,
+48|    "md": 12,
+49|    "lg": 16,
+50|    "xl": 24,
+51|    "2xl": 32,
+52|    "3xl": 48
+53|  },
+54|  "radius_tokens": {
+55|    "sm": 8,
+56|    "md": 12,
+57|    "lg": 16,
+58|    "pill": 999
+59|  },
+60|  "shadow_tier": "2",
+61|  "navigation": "bottom_tabs",
+62|  "icon_set": "Phosphor",
+63|  "glassmorphism": {
+64|    "enabled": "true",
+65|    "do's": [
+66|      "Use for bottom tab bar background.",
+67|      "Use for the sticky CTA container (Semak Harga) at the bottom of scrolling forms.",
+68|      "Use for bottom sheet headers (Tracking map)."
+69|    ],
+70|    "dont's": [
+71|      "Never blur standard order form cards or item chips."
+72|    ]
+73|  },
+74|  "platform_libraries": {
+75|    "glass": {
+76|      "ios": "expo-glass-effect",
+77|      "android": "expo-blur",
+78|      "low_end_android_fallback": "solid surfaceSecondary"
+79|    },
+80|    "image": "expo-image",
+81|    "blur": "expo-blur",
+82|    "bottom_sheet": "@gorhom/bottom-sheet",
+83|    "animation": "react-native-reanimated",
+84|    "gesture": "react-native-gesture-handler",
+85|    "maps": "react-native-maps"
+86|  },
+87|  "screens": [
+88|    {
+89|      "name": "Home / Place Order",
+90|      "purpose": "A unified, single-screen step-by-step form to book a delivery quickly.",
+91|      "states": {
+92|        "loading": "Skeleton blocks mimicking the 5 steps.",
+93|        "empty": "N/A - the form is always present.",
+94|        "error": "Failed to load locations banner at top."
+95|      },
+96|      "layout": "Scrollable layout. Top: Header with hamburger menu, notification bell. Hero Card: 'Hantar apa sahaja...' with 3D illustration and brandTertiary background. Vertical form stack: 1. Pickup input, 2. Dropoff input + 'Tambah Henti' button, 3. Package Size (Horizontal row of rounded cards), 4. Weight (Horizontal pill chips), 5. Vehicle (Cards for Motor/Kereta). Bottom: Fixed container with glassmorphism holding the primary 'SEMAK HARGA' button."
+97|    },
+98|    {
+99|      "name": "Tracking Map",
+100|      "purpose": "Live visual confirmation of courier location and order timeline.",
+101|      "states": {
+102|        "loading": "Map loading spinner, empty sheet.",
+103|        "empty": "N/A",
+104|        "error": "Static fallback card if map fails: 'Order in progress. Courier ETA...'"
+105|      },
+106|      "layout": "Full-screen map using react-native-maps. An interactive Bottom Sheet covers the lower third. Inside sheet: Driver Avatar, Name, License Plate, and Call/Chat buttons. Below that, a vertical stepper showing timeline (Pickup -> In Transit -> Delivered)."
+107|    },
+108|    {
+109|      "name": "Tempahan (Order History)",
+110|      "purpose": "Archive of past and active deliveries.",
+111|      "states": {
+112|        "loading": "List skeletons.",
+113|        "empty": "Illustration of a rider + 'Tiada tempahan setakat ini' + CTA.",
+114|        "error": "Failed to fetch orders."
+115|      },
+116|      "layout": "Standard list view with segmented control (Active / Past) pinned at top. Cards use surfaceSecondary with yellow borderStrong for active orders."
+117|    }
+118|  ],
+119|  "images": {
+120|    "hero_illustration": {
+121|      "url": "https://images.unsplash.com/photo-1647221597996-54f3d0f73809?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxkZWxpdmVyeSUyMHBhcmNlbCUyMGJveCUyMDNkJTIwaWxsdXN0cmF0aW9ufGVufDB8fHx8MTc4NzIzMjQ2MHww&ixlib=rb-4.1.0&q=85",
+122|      "alt": "3D cardboard box with red propeller"
+123|    },
+124|    "empty_orders": {
+125|      "url": "https://images.unsplash.com/photo-1688267224418-4db941035ee4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHxlbXB0eSUyMHN0YXRlJTIwaWxsdXN0cmF0aW9uJTIwZGVsaXZlcnklMjByaWRlcnxlbnwwfHx8fDE3ODcyMzI0Njl8MA&ixlib=rb-4.1.0&q=85",
+126|      "alt": "Person on a motor scooter with a delivery box"
+127|    }
+128|  },
+129|  "instructions_to_main_agent": [
+130|    "Design is purely '4 Tactile / Playful LIGHT'. Build chunky 16px rounded cards (radius lg), oversized tap areas, and soft shadows (tier 2) to emulate consumer logistics apps like Lalamove and Grab Express.",
+131|    "Brand colors are strictly Yellow (#FFD60A) and Black (#000000). Apply the yellow heavily for primary CTAs and active tab icons. Selected form states (e.g. Size/Vehicle selection) should use 'surfaceTertiary' (#FFFBE6) background with a 'borderStrong' (#FFD60A) yellow outline.",
+132|    "Home screen must have a unified continuous scroll form mirroring the required 5 steps. Keep 'SEMAK HARGA' sticky at the bottom using a glassmorphic container.",
+133|    "Utilize Phosphor filled icons everywhere to maintain the chunky, playful aesthetic.",
+134|    "Bilingual support is needed, default to Bahasa Malaysia.",
+135|    "For the map tracking screen, use `@gorhom/bottom-sheet` and display a clear timeline using a vertical step indicator."
+136|  ],
+137|  "haptics": {
+138|    "primary_button": "impactMedium",
+139|    "tab_change": "selection",
+140|    "radio_card_select": "impactLight",
+141|    "map_sheet_drag": "selection"
+142|  }
+143|}
+[End of file]
