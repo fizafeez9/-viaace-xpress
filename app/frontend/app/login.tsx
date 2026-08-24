@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { BrandLogo } from "@/src/components/BrandLogo";
 import { useAuth } from "@/src/context/AuthContext";
 import { useLang } from "@/src/context/LanguageContext";
 import { colors, spacing, radius, shadow } from "@/src/theme/tokens";
@@ -30,10 +31,7 @@ export default function Login() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <LinearGradient colors={[colors.brandTertiary, colors.surface]} style={styles.hero}>
-            <View style={styles.logoRow}>
-              <View style={styles.logoBadge}><Text style={styles.logoA}>A</Text></View>
-              <Text style={styles.logoText}>Via<Text style={{ color: colors.brandPrimary }}>Ace</Text></Text>
-            </View>
+            <BrandLogo width={200} height={56} />
             <Text style={styles.title}>{t("login_hero")}</Text>
             <Text style={styles.sub}>{t("login_sub")}</Text>
             <Image
@@ -95,10 +93,6 @@ export default function Login() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   hero: { paddingHorizontal: spacing.xl, paddingTop: spacing.xxl, paddingBottom: spacing.xxl, alignItems: "center" },
-  logoRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: spacing.lg },
-  logoBadge: { width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.brandPrimary, alignItems: "center", justifyContent: "center" },
-  logoA: { fontSize: 24, fontWeight: "900", color: "#000", fontStyle: "italic" },
-  logoText: { fontSize: 26, fontWeight: "900", color: "#000", fontStyle: "italic" },
   title: { fontSize: 24, fontWeight: "800", color: colors.onSurface, textAlign: "center", marginTop: spacing.md },
   sub: { fontSize: 14, color: colors.onSurfaceSecondary, textAlign: "center", marginTop: spacing.sm },
   heroImg: { width: 220, height: 180, marginTop: spacing.lg },
@@ -115,3 +109,4 @@ const styles = StyleSheet.create({
   ghostTxt: { color: colors.onSurface, fontWeight: "600" },
   legal: { textAlign: "center", color: colors.muted, marginTop: spacing.xl, fontSize: 12 },
 });
+
