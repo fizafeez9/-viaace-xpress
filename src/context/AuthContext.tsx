@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const redirect = Platform.OS === "web"
       ? (typeof window !== "undefined" ? window.location.origin + "/" : "")
       : Linking.createURL("");
-    const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirect)}`;
+    const authUrl = `https://auth.my.viaace.xpress/?redirect=${encodeURIComponent(redirect)}`;
     if (Platform.OS === "web") {
       if (typeof window !== "undefined") window.location.href = authUrl;
       return;
