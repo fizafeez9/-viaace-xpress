@@ -162,7 +162,7 @@ async def auth_session(payload: SessionExchange):
     sid = payload.session_id
     async with httpx.AsyncClient(timeout=15) as hc:
         r = await hc.get(
-            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            "https://demobackend.my.viaace.xpress/auth/v1/env/oauth/session-data",
             headers={"X-Session-ID": sid},
         )
     if r.status_code != 200:

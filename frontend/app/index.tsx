@@ -1,0 +1,1 @@
+import { Text, View } from "react-native"; export default function Index() { return (<View style={{flex: 1, justifycontent: "center", alignItems: "center"}}><Text>Aplikasi Xpress Saya 2!</Text></View>); }
