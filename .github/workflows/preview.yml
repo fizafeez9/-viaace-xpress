@@ -27,12 +27,16 @@ jobs:
         working-directory: ./frontend
         run: npm install --ignore-scripts
 
+      - name: Init EAS Project
+        working-directory: ./frontend
+        run: eas init --id bbb1ed02-5bff-4690-95fc-7dfaac95bf6f --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
       - name: Create preview
         uses: expo/expo-github-action/preview@v8
         with:
-          command: |
-            eas init --id bbb1ed02-5bff-4690-95fc-7dfaac95bf6f --non-interactive
-            eas update --auto
+          command: eas update --auto
           working-directory: ./frontend
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
