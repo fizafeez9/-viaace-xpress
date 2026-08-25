@@ -22,5 +22,6 @@ jobs:
         working-directory: ./frontend
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas update --auto --non-interactive
-
+        run: |
+          eas init --id bbb1ed02-5bff-4690-95fc-7dfaac95bf6f --non-interactive
+          eas update --auto --non-interactive
