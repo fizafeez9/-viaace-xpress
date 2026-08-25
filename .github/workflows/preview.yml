@@ -19,7 +19,8 @@ jobs:
         run: npm install -g eas-cli
 
       - name: Run EAS Update
-        run: eas update --auto --project-id bbb1ed02-5bff-4690-95fc-7dfaac95bf6f
         working-directory: ./frontend
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas update --auto --non-interactive
+
