@@ -17,16 +17,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup EAS CLI
+      - name: Install EAS CLI Globally
         run: npm install -g eas-cli
 
       - name: Install dependencies
         working-directory: ./frontend
         run: npm install --ignore-scripts
 
-      - name: Run EAS Update Manually
+      - name: Run EAS Update With Explicit Project ID
         working-directory: ./frontend
-        run: eas update --auto --non-interactive
+        run: eas update --auto --non-interactive --id bbb1ed02-5bff-4690-95fc-7dfaac95bf6f
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EAS_PROJECT_ID: bbb1ed02-5bff-4690-95fc-7dfaac95bf6f
