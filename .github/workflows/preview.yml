@@ -27,6 +27,14 @@ jobs:
         working-directory: ./frontend
         run: npm install --ignore-scripts
 
+      - name: Force Link EAS Project
+        working-directory: ./frontend
+        run: |
+          mkdir -p .expo
+          echo '{"offline": false, "projectId": "bbb1ed02-5bff-4690-95fc-7dfaac95bf6f"}' > .expo/settings.json
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
       - name: Create preview
         uses: expo/expo-github-action/preview@v8
         with:
