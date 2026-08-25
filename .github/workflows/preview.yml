@@ -17,11 +17,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup Expo
-        uses: expo/expo-github-action@v8
-        with:
-          expo-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Setup EAS CLI
+        run: npm install -g eas-cli
 
       - name: Install dependencies
         working-directory: ./frontend
@@ -29,7 +26,7 @@ jobs:
 
       - name: Run EAS Update Manually
         working-directory: ./frontend
-        run: npx eas-cli update --auto --non-interactive
+        run: eas update --auto --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EAS_PROJECT_ID: bbb1ed02-5bff-4690-95fc-7dfaac95bf6f
