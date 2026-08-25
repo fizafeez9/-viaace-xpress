@@ -30,3 +30,6 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EAS_PROJECT_ID: bbb1ed02-5bff-4690-95fc-7dfaac95bf6f
+
+          # force refresh
+
