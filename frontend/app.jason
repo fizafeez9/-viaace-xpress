@@ -2,6 +2,7 @@
   "expo": {
     "name": "ViaAce Xpress",
     "slug": "viaace-xpress",
+    "owner": "fizafeez9",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./84E5DCE8-6EE3-441A-A5BD-6C50E5CC4692.png",
