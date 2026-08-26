@@ -6,7 +6,7 @@ export const BrandLogo: React.FC<{ width?: number; height?: number }> = ({ width
   return (
     <View style={styles.wrap} testID="brand-logo">
       <Image
-        source={require("../../../84E5DCE8-6EE3-441A-A5BD-6C50E5CC4692.png")}
+        source={require("../../assets/84E5DCE8-6EE3-441A-A5BD-6C50E5CC4692.png")}
         style={{ width, height }}
         contentFit="contain"
       />
