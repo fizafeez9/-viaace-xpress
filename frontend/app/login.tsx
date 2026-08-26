@@ -31,7 +31,7 @@ export default function Login() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <LinearGradient colors={[colors.brandTertiary, colors.surface]} style={styles.hero}>
-            <BrandLogo width={200} height={56} />
+            <BrandLogo width={340} height={100} />
             <Text style={styles.title}>{t("login_hero")}</Text>
             <Text style={styles.sub}>{t("login_sub")}</Text>
             <Image
@@ -58,7 +58,7 @@ export default function Login() {
 
             <TextInput
               testID="guest-name-input"
-              placeholder="Nama anda (pilihan)"
+              placeholder="Nama anda"
               placeholderTextColor={colors.muted}
               value={guestName}
               onChangeText={setGuestName}
