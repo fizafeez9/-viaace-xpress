@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 
-export const BrandLogo: React.FC<{ width?: number; height?: number }> = ({ width = 120, height = 36 }) => {
+export const BrandLogo: React.FC<{ width?: number; height?: number }> = ({ width = 200, height = 60 }) => {
   return (
     <View style={styles.wrap} testID="brand-logo">
       <Image
