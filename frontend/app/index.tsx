@@ -31,8 +31,10 @@ export default function Index() {
         resizeMode="cover"
       >
         <View style={styles.logoContainer}>
-          {/* Saiz logo dibesarkan secara terus kepada 650x220 supaya sama besar macam dalam video rujukan */}
-          <BrandLogo width={650} height={220} />
+          {/* Kita pasak saiz asas dan paksa ia membesar menggunakan transform scale bagi persekitaran web */}
+          <View style={styles.scaleWrapper}>
+            <BrandLogo width={300} height={100} />
+          </View>
         </View>
       </ImageBackground>
     </View>
@@ -54,9 +56,12 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    // Kesan neon glow keemasan yang tebal dan terang menyala
+  },
+  scaleWrapper: {
+    // Di sini kita paksa saiz logo dibesarkan sebanyak 2.8 kali ganda secara fizikal & tambah kesan glow terang
     ...(Platform.OS === 'web' && {
-      filter: 'drop-shadow(0px 0px 25px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 50px rgba(255, 165, 0, 0.7))',
+      transform: [{ scale: 2.8 }],
+      filter: 'drop-shadow(0px 0px 20px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 40px rgba(255, 165, 0, 0.7))',
     }),
   },
 });
