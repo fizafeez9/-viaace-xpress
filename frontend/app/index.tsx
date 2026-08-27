@@ -22,10 +22,23 @@ export default function Index() {
     }
   };
 
-  // Tetapkan masa kepada 6500ms (6.5 saat) memandangkan durasi video ialah 6 saat
+  // Paksa video dimainkan menggunakan rujukan (ref) sejurus komponen dipaparkan
   useEffect(() => {
     if (loading) return;
 
+    const playVideo = async () => {
+      try {
+        if (videoRef.current) {
+          await videoRef.current.playAsync();
+        }
+      } catch (error) {
+        console.log("Error playing video:", error);
+      }
+    };
+
+    playVideo();
+
+    // Safety timer 6.5 saat untuk beralih skrin
     const safetyTimer = setTimeout(() => {
       navigateNext();
     }, 6500); 
@@ -47,7 +60,7 @@ export default function Index() {
         style={styles.video}
         resizeMode={ResizeMode.COVER}
         shouldPlay={true}
-        isMuted={true} // Diperlukan supaya Safari iPhone boleh auto-play video
+        isMuted={true}
         isLooping={false}
         useNativeControls={false}
         onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
@@ -59,7 +72,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: "#000000",
     alignItems: "center",
     justifyContent: "center",
   },
