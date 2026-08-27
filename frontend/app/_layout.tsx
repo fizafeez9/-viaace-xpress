@@ -30,7 +30,12 @@ export default function RootLayout() {
           <LanguageProvider>
             <AuthProvider>
               <OrderDraftProvider>
-                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#FFFFFF" } }} />
+                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#FFFFFF" } }}>
+                  <Stack.Screen name="splash" />
+                  <Stack.Screen name="login" />
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(tabs)" />
+                </Stack>
               </OrderDraftProvider>
             </AuthProvider>
           </LanguageProvider>
