@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+ import { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
+import { BrandLogo } from "@/src/components/BrandLogo";
 import { colors } from "@/src/theme/tokens";
 
 export default function Index() {
@@ -10,17 +11,31 @@ export default function Index() {
 
   useEffect(() => {
     if (loading) return;
-    if (user) router.replace("/(tabs)");
-    else router.replace("/login");
+    
+    // Beri masa sedikit (cth: 1.5 saat) untuk paparkan logo splash, baru buat keputusan laluan
+    const timer = setTimeout(() => {
+      if (user) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/login");
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [user, loading, router]);
 
   return (
     <View style={styles.container} testID="splash-screen">
-      <ActivityIndicator size="large" color={colors.brandPrimary} />
+      <BrandLogo width={260} height={80} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.surface },
+  container: { 
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center", 
+    backgroundColor: colors.surface 
+  },
 });
