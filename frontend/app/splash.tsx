@@ -12,7 +12,7 @@ export default function SplashScreen() {
     const timer = setTimeout(() => {
       // Selepas 2 saat, arahkan terus ke page login
       router.replace("/login");
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
