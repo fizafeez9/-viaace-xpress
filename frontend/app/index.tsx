@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, ImageBackground, Platform } from "react-native";
+import { StyleSheet, View, ImageBackground, Platform, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
 import { BrandLogo } from "@/src/components/BrandLogo";
+
+const { width: screenWidth } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
@@ -26,12 +28,14 @@ export default function Index() {
   return (
     <View style={styles.container} testID="splash-screen">
       <ImageBackground
-        source={require("@/assets/assets/IMG_5346.jpeg")}
+        // Laluan diselaraskan mengikut struktur folder sebenar kau
+        source={require("../assets/IMG_5346.jpeg")}
         style={styles.background}
         resizeMode="cover"
       >
         <View style={styles.logoContainer}>
-          <BrandLogo width={850} height={290} />
+          {/* Saiz logo yang besar, megah & selari dengan lebar skrin */}
+          <BrandLogo width={Math.min(screenWidth * 0.85, 420)} height={145} />
         </View>
       </ImageBackground>
     </View>
@@ -53,9 +57,9 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    // Kesan neon glow langsung menggunakan CSS web untuk elak ralat skrin putih
+    // Kesan neon glow keemasan yang terang pada teks hitam dan logo
     ...(Platform.OS === 'web' && {
-      filter: 'drop-shadow(0px 0px 25px rgba(255, 215, 0, 0.9)) drop-shadow(0px 0px 50px rgba(255, 165, 0, 0.6))',
+      filter: 'drop-shadow(0px 0px 20px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 40px rgba(255, 165, 0, 0.7))',
     }),
   },
 });
