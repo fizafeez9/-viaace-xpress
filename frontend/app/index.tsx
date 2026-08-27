@@ -12,14 +12,14 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
     
-    // Beri masa sedikit (cth: 1.5 saat) untuk paparkan logo splash, baru buat keputusan laluan
+    // Beri masa sedikit (cth: 3 saat) untuk paparkan logo splash, baru buat keputusan laluan
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
       } else {
         router.replace("/login");
       }
-    }, 1500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [user, loading, router]);
