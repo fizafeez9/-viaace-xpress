@@ -1,29 +1,41 @@
-import React, { useState, useRef } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { ResizeMode, Video } from "expo-av";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme/tokens";
 
-const { width, DimensionsHeight } = Dimensions.get("window");
-
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const videoRef = useRef<Video>(null);
-  const [isVideoFinished, setIsVideoFinished] = useState(false);
+  const [hasNavigated, setHasNavigated] = useState(false);
 
-  // Fungsi yang dipanggil apabila video selesai dimainkan
+  const navigateNext = () => {
+    if (hasNavigated) return;
+    setHasNavigated(true);
+
+    if (user) {
+      router.replace("/(tabs)");
+    } else {
+      router.replace("/login");
+    }
+  };
+
+  // Tetapkan masa kepada 6500ms (6.5 saat) memandangkan durasi video ialah 6 saat
+  useEffect(() => {
+    if (loading) return;
+
+    const safetyTimer = setTimeout(() => {
+      navigateNext();
+    }, 6500); 
+
+    return () => clearTimeout(safetyTimer);
+  }, [user, loading, hasNavigated]);
+
   const handlePlaybackStatusUpdate = (status: any) => {
-    if (status.didJustFinish && !isVideoFinished) {
-      setIsVideoFinished(true);
-      
-      // Selepas video habis, buat keputusan laluan ikut status auth
-      if (user) {
-        router.replace("/(tabs)");
-      } else {
-        router.replace("/login");
-      }
+    if (status.isLoaded && status.didJustFinish) {
+      navigateNext();
     }
   };
 
@@ -31,12 +43,13 @@ export default function Index() {
     <View style={styles.container} testID="splash-screen">
       <Video
         ref={videoRef}
-        // Gantikan laluan ini mengikut lokasi fail video kau
         source={require("@/assets/videos/intro.mp4")} 
         style={styles.video}
         resizeMode={ResizeMode.COVER}
-        shouldPlay
+        shouldPlay={true}
+        isMuted={true} // Diperlukan supaya Safari iPhone boleh auto-play video
         isLooping={false}
+        useNativeControls={false}
         onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
       />
     </View>
