@@ -1,62 +1,64 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
+import { BrandLogo } from "@/src/components/BrandLogo";
 import { colors } from "@/src/theme/tokens";
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withSequence, 
+  withTiming, 
+  Easing 
+} from "react-native-reanimated";
 
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const [hasNavigated, setHasNavigated] = useState(false);
 
-  const navigateNext = () => {
-    if (hasNavigated) return;
-    setHasNavigated(true);
-
-    if (user) {
-      router.replace("/(tabs)");
-    } else {
-      router.replace("/login");
-    }
-  };
+  // Shared values untuk animasi skala dan kelegapan logo
+  const scale = useSharedValue(0.8);
+  const opacity = useSharedValue(0);
 
   useEffect(() => {
     if (loading) return;
 
-    // Tempoh masa sejajar dengan durasi video (6 saat = 6000ms)
+    // Jalankan animasi masuk (fade-in & zoom)
+    opacity.value = withTiming(1, { duration: 800, easing: Easing.ease });
+    scale.value = withSequence(
+      withTiming(1.1, { duration: 1500, easing: Easing.inOut(Easing.quad) }),
+      withTiming(1, { duration: 1500, easing: Easing.out(Easing.cubic) })
+    );
+
+    // Timer 6 saat sepadan dengan durasi intro yang kau mahu
     const timer = setTimeout(() => {
-      navigateNext();
+      if (user) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/login");
+      }
     }, 6000);
 
     return () => clearTimeout(timer);
-  }, [user, loading, hasNavigated]);
+  }, [user, loading, router, scale, opacity]);
 
-  // Jika dibuka melalui pelayar web (Safari/Chrome), kita guna elemen video HTML asli yang pasti boleh autoplay
-  if (Platform.OS === "web") {
-    return (
-      <View style={styles.container} testID="splash-screen">
-        <video
-          autoPlay
-          muted
-          playsInline
-          onEnded={navigateNext}
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            backgroundColor: "#000",
-          }}
-          src={require("@/assets/videos/intro.mp4")}
-        />
-      </View>
-    );
-  }
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value,
+      shadowColor: colors.brandPrimary,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: opacity.value * 0.8,
+      shadowRadius: 20,
+      elevation: 10,
+    };
+  });
 
-  // Untuk aplikasi native (iOS/Android app sebenar), kita boleh guna expo-av jika perlu
   return (
     <View style={styles.container} testID="splash-screen">
-      {/* Fallback jika bukan web */}
+      <Animated.View style={animatedStyle}>
+        <BrandLogo width={280} height={90} />
+      </Animated.View>
     </View>
   );
 }
