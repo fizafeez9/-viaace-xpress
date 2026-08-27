@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, ImageBackground, Platform, Dimensions } from "react-native";
+import { StyleSheet, View, ImageBackground, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
 import { BrandLogo } from "@/src/components/BrandLogo";
-
-const { width: screenWidth } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
@@ -28,14 +26,13 @@ export default function Index() {
   return (
     <View style={styles.container} testID="splash-screen">
       <ImageBackground
-        // Laluan diselaraskan mengikut struktur folder sebenar kau
         source={require("../assets/IMG_5346.jpeg")}
         style={styles.background}
         resizeMode="cover"
       >
         <View style={styles.logoContainer}>
-          {/* Saiz logo yang besar, megah & selari dengan lebar skrin */}
-          <BrandLogo width={Math.min(screenWidth * 0.85, 420)} height={145} />
+          {/* Saiz logo dibesarkan secara terus kepada 650x220 supaya sama besar macam dalam video rujukan */}
+          <BrandLogo width={650} height={220} />
         </View>
       </ImageBackground>
     </View>
@@ -57,9 +54,9 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    // Kesan neon glow keemasan yang terang pada teks hitam dan logo
+    // Kesan neon glow keemasan yang tebal dan terang menyala
     ...(Platform.OS === 'web' && {
-      filter: 'drop-shadow(0px 0px 20px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 40px rgba(255, 165, 0, 0.7))',
+      filter: 'drop-shadow(0px 0px 25px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 50px rgba(255, 165, 0, 0.7))',
     }),
   },
 });
