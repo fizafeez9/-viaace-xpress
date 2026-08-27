@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Platform } from "react-native";
 import { useRouter } from "expo-router";
-import { ResizeMode, Video } from "expo-av";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme/tokens";
 
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const videoRef = useRef<Video>(null);
   const [hasNavigated, setHasNavigated] = useState(false);
 
   const navigateNext = () => {
@@ -22,49 +20,43 @@ export default function Index() {
     }
   };
 
-  // Paksa video dimainkan menggunakan rujukan (ref) sejurus komponen dipaparkan
   useEffect(() => {
     if (loading) return;
 
-    const playVideo = async () => {
-      try {
-        if (videoRef.current) {
-          await videoRef.current.playAsync();
-        }
-      } catch (error) {
-        console.log("Error playing video:", error);
-      }
-    };
-
-    playVideo();
-
-    // Safety timer 6.5 saat untuk beralih skrin
-    const safetyTimer = setTimeout(() => {
+    // Tempoh masa sejajar dengan durasi video (6 saat = 6000ms)
+    const timer = setTimeout(() => {
       navigateNext();
-    }, 6500); 
+    }, 6000);
 
-    return () => clearTimeout(safetyTimer);
+    return () => clearTimeout(timer);
   }, [user, loading, hasNavigated]);
 
-  const handlePlaybackStatusUpdate = (status: any) => {
-    if (status.isLoaded && status.didJustFinish) {
-      navigateNext();
-    }
-  };
+  // Jika dibuka melalui pelayar web (Safari/Chrome), kita guna elemen video HTML asli yang pasti boleh autoplay
+  if (Platform.OS === "web") {
+    return (
+      <View style={styles.container} testID="splash-screen">
+        <video
+          autoPlay
+          muted
+          playsInline
+          onEnded={navigateNext}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            backgroundColor: "#000",
+          }}
+          src={require("@/assets/videos/intro.mp4")}
+        />
+      </View>
+    );
+  }
 
+  // Untuk aplikasi native (iOS/Android app sebenar), kita boleh guna expo-av jika perlu
   return (
     <View style={styles.container} testID="splash-screen">
-      <Video
-        ref={videoRef}
-        source={require("@/assets/videos/intro.mp4")} 
-        style={styles.video}
-        resizeMode={ResizeMode.COVER}
-        shouldPlay={true}
-        isMuted={true}
-        isLooping={false}
-        useNativeControls={false}
-        onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-      />
+      {/* Fallback jika bukan web */}
     </View>
   );
 }
@@ -75,10 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     alignItems: "center",
     justifyContent: "center",
-  },
-  video: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
   },
 });
