@@ -3,57 +3,25 @@ import { StyleSheet, View, ImageBackground, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
 import { BrandLogo } from "@/src/components/BrandLogo";
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  Easing 
-} from "react-native-reanimated";
 
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  // Shared value untuk animasi denyutan cahaya (glow) yang bergerak
-  const glowAnimation = useSharedValue(0.5);
-
   useEffect(() => {
     if (loading) return;
 
-    // Jalankan animasi cahaya berdenyut secara berulang
-    glowAnimation.value = withRepeat(
-      withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-      -1, // -1 bermaksud ulang selamanya
-      true // 'true' membolehkan ia turun naik (fade in & out) dengan lancar
-    );
-
-    // Timer ditetapkan kepada 4 saat (4000ms) seperti yang kau minta
+    // Timer 6 saat sebelum masuk ke login/tabs
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
       } else {
         router.replace("/login");
       }
-    }, 4000);
+    }, 6000);
 
     return () => clearTimeout(timer);
-  }, [user, loading, router, glowAnimation]);
-
-  // Gaya animasi cahaya bergerak untuk platform web
-  const animatedGlowStyle = useAnimatedStyle(() => {
-    const blur1 = 15 + glowAnimation.value * 20;
-    const blur2 = 30 + glowAnimation.value * 35;
-    const opacity = 0.6 + glowAnimation.value * 0.4;
-
-    if (Platform.OS === 'web') {
-      return {
-        // @ts-ignore
-        filter: `drop-shadow(0px 0px ${blur1}px rgba(255, 215, 0, ${opacity})) drop-shadow(0px 0px ${blur2}px rgba(255, 165, 0, ${opacity * 0.7}))`,
-      };
-    }
-    return {};
-  });
+  }, [user, loading, router]);
 
   return (
     <View style={styles.container} testID="splash-screen">
@@ -63,10 +31,10 @@ export default function Index() {
         resizeMode="cover"
       >
         <View style={styles.logoContainer}>
-          {/* Saiz dikembalikan kepada saiz rujukan asal yang cantik & seimbang */}
-          <Animated.View style={[styles.logoWrapper, animatedGlowStyle]}>
-            <BrandLogo width={360} height={125} />
-          </Animated.View>
+          {/* Kita pasak saiz asas dan paksa ia membesar menggunakan transform scale bagi persekitaran web */}
+          <View style={styles.scaleWrapper}>
+            <BrandLogo width={300} height={100} />
+          </View>
         </View>
       </ImageBackground>
     </View>
@@ -89,8 +57,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logoWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
+  scaleWrapper: {
+    // Di sini kita paksa saiz logo dibesarkan sebanyak 2.8 kali ganda secara fizikal & tambah kesan glow terang
+    ...(Platform.OS === 'web' && {
+      transform: [{ scale: 2.8 }],
+      filter: 'drop-shadow(0px 0px 20px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 40px rgba(255, 165, 0, 0.7))',
+    }),
   },
 });
