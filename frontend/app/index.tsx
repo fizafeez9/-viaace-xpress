@@ -31,7 +31,7 @@ export default function Index() {
   return (
     <View style={styles.container} testID="splash-screen">
       <ImageBackground
-        source={require("../assets/IMG_5492.jpeg")}
+        source={require("../assets/IMG_5565.jpeg")}
         style={styles.image}
         resizeMode="cover"
       />
