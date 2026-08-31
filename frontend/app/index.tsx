@@ -1,29 +1,26 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Dimensions, ImageBackground } from "react-native";
+import { StyleSheet, View, ImageBackground, Platform, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
+import { BrandLogo } from "@/src/components/BrandLogo";
 
-const { width, height } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  const handleNavigate = () => {
-    if (user) {
-      router.replace("/(tabs)");
-    } else {
-      router.replace("/login");
-    }
-  };
-
   useEffect(() => {
     if (loading) return;
 
-    // Tetapkan masa paparan kepada 5 saat (5000ms)
+    // Timer 6 saat sebelum masuk ke login/tabs
     const timer = setTimeout(() => {
-      handleNavigate();
-    }, 5000);
+      if (user) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/login");
+      }
+    }, 6000);
 
     return () => clearTimeout(timer);
   }, [user, loading, router]);
@@ -31,10 +28,16 @@ export default function Index() {
   return (
     <View style={styles.container} testID="splash-screen">
       <ImageBackground
-        source={require("../assets/IMG_5565.jpeg")}
-        style={styles.image}
+        // Laluan diselaraskan mengikut struktur folder sebenar kau
+        source={require("../assets/E1489C85-0D74-4932-9F61-F2CB04301804.png")}
+        style={styles.background}
         resizeMode="cover"
-      />
+      >
+        <View style={styles.logoContainer}>
+          {/* Saiz logo yang besar, megah & selari dengan lebar skrin */}
+          <BrandLogo width={Math.min(screenWidth * 0.85, 420)} height={145} />
+        </View>
+      </ImageBackground>
     </View>
   );
 }
@@ -42,13 +45,21 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#1a1a1a",
+  },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
-  image: {
-    width: width,
-    height: height,
-    position: "absolute",
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    // Kesan neon glow keemasan yang terang pada teks hitam dan logo
+    ...(Platform.OS === 'web' && {
+      filter: 'drop-shadow(0px 0px 20px rgba(255, 215, 0, 0.95)) drop-shadow(0px 0px 40px rgba(255, 165, 0, 0.7))',
+    }),
   },
 });
