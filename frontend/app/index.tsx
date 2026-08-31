@@ -10,7 +10,7 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
-    // Timer ditetapkan kepada 4 saat sebelum ke skrin seterusnya
+    // Timer ditetapkan tepat kepada 4 saat sebelum ke skrin seterusnya
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
@@ -24,9 +24,30 @@ export default function Index() {
 
   return (
     <View style={styles.container} testID="splash-screen">
-      {/* Lapisan tambahan tekstur kasar gaya permukaan jalan raya untuk persekitaran web */}
+      {/* Lapisan tekstur organik gaya konkrit gelap kasar (Grunge/Concrete Noise) */}
       {Platform.OS === 'web' && (
-        <View style={styles.noiseOverlay} pointerEvents="none" />
+        <View style={styles.concreteTextureOverlay} pointerEvents="none">
+          <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+            <filter id="noiseFilter">
+              <feTurbulence 
+                type="fractalNoise" 
+                baseFrequency="0.8" 
+                numOctaves="4" 
+                stitchTiles="stitch" 
+              />
+              <feColorMatrix 
+                type="matrix" 
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.15 0" 
+              />
+            </filter>
+          </svg>
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            filter: 'url(#noiseFilter)',
+            opacity: 0.85
+          }} />
+        </View>
       )}
 
       <View style={styles.logoContainer}>
@@ -42,28 +63,18 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#161719", // Warna asas kelabu gelap jalan raya
+    // Warna asas kelabu gelap konkrit persis dalam gambar rujukan
+    backgroundColor: "#1c1e21",
     alignItems: "center",
     justifyContent: "center",
     ...(Platform.OS === 'web' && {
-      // Menghasilkan tekstur bintik-bintik kasar (asphalt/road texture) menggunakan CSS radial & linear grain
-      backgroundImage: `
-        radial-gradient(rgba(255, 255, 255, 0.04) 15%, transparent 16%),
-        radial-gradient(rgba(0, 0, 0, 0.6) 15%, transparent 16%),
-        linear-gradient(to bottom, #1c1d20 0%, #121315 100%)
-      `,
-      backgroundSize: '24px 24px, 24px 24px, 100% 100%',
-      backgroundPosition: '0 0, 12px 12px, 0 0',
+      backgroundImage: 'radial-gradient(circle at center, #26292e 0%, #151719 100%)',
     } as any),
   },
-  noiseOverlay: {
+  concreteTextureOverlay: {
     ...StyleSheet.absoluteFillObject,
-    opacity: 0.25,
-    // Tambahan lapisan kesan bintik halus (noise)
-    ...(Platform.OS === 'web' && {
-      backgroundImage: 'repeating-radial-gradient(circle at 0 0, transparent 0, #000 2px, transparent 3px)',
-      backgroundSize: '6px 6px',
-    } as any),
+    overflow: 'hidden',
+    zIndex: 1,
   },
   logoContainer: {
     alignItems: "center",
