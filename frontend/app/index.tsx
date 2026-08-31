@@ -2,29 +2,15 @@ import React, { useEffect } from "react";
 import { StyleSheet, View, Image, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  Easing 
-} from "react-native-reanimated";
 
 export default function Index() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  
-  const glowAnimation = useSharedValue(0.5);
 
   useEffect(() => {
     if (loading) return;
 
-    glowAnimation.value = withRepeat(
-      withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-
+    // Timer ditetapkan kepada 4 saat sebelum ke skrin seterusnya
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
@@ -34,31 +20,20 @@ export default function Index() {
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, [user, loading, router, glowAnimation]);
-
-  const animatedGlowStyle = useAnimatedStyle(() => {
-    const blur1 = 15 + glowAnimation.value * 20;
-    const blur2 = 30 + glowAnimation.value * 35;
-    const opacity = 0.6 + glowAnimation.value * 0.4;
-
-    if (Platform.OS === 'web') {
-      return {
-        // @ts-ignore
-        filter: `drop-shadow(0px 0px ${blur1}px rgba(255, 215, 0, ${opacity})) drop-shadow(0px 0px ${blur2}px rgba(255, 165, 0, ${opacity * 0.7}))`,
-      };
-    }
-    return {};
-  });
+  }, [user, loading, router]);
 
   return (
     <View style={styles.container} testID="splash-screen">
+      {/* Lapisan tambahan tekstur kasar gaya permukaan jalan raya untuk persekitaran web */}
+      {Platform.OS === 'web' && (
+        <View style={styles.noiseOverlay} pointerEvents="none" />
+      )}
+
       <View style={styles.logoContainer}>
-        <Animated.View style={[styles.logoWrapper, animatedGlowStyle]}>
-          <Image
-            source={require("../assets/E1489C85-0D74-4932-9F61-F2CB04301804.png")}
-            style={styles.logoImage}
-          />
-        </Animated.View>
+        <Image
+          source={require("../assets/E1489C85-0D74-4932-9F61-F2CB04301804.png")}
+          style={styles.logoImage}
+        />
       </View>
     </View>
   );
@@ -67,18 +42,33 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Latar belakang kelabu gelap berona tekstur pepejal yang sepadan dengan tema
-    backgroundColor: "#1c1c1e",
+    backgroundColor: "#161719", // Warna asas kelabu gelap jalan raya
     alignItems: "center",
     justifyContent: "center",
+    ...(Platform.OS === 'web' && {
+      // Menghasilkan tekstur bintik-bintik kasar (asphalt/road texture) menggunakan CSS radial & linear grain
+      backgroundImage: `
+        radial-gradient(rgba(255, 255, 255, 0.04) 15%, transparent 16%),
+        radial-gradient(rgba(0, 0, 0, 0.6) 15%, transparent 16%),
+        linear-gradient(to bottom, #1c1d20 0%, #121315 100%)
+      `,
+      backgroundSize: '24px 24px, 24px 24px, 100% 100%',
+      backgroundPosition: '0 0, 12px 12px, 0 0',
+    } as any),
+  },
+  noiseOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.25,
+    // Tambahan lapisan kesan bintik halus (noise)
+    ...(Platform.OS === 'web' && {
+      backgroundImage: 'repeating-radial-gradient(circle at 0 0, transparent 0, #000 2px, transparent 3px)',
+      backgroundSize: '6px 6px',
+    } as any),
   },
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-  },
-  logoWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
+    zIndex: 2,
   },
   logoImage: {
     width: 380,
