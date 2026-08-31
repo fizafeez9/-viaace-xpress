@@ -20,10 +20,10 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
-    // Masa paparan imej splash (contoh: 2.5 saat) sebelum beralih ke halaman seterusnya
+    // Tetapkan masa paparan kepada 5 saat (5000ms)
     const timer = setTimeout(() => {
       handleNavigate();
-    }, 2500);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [user, loading, router]);
