@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, ImageBackground } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
-import { ResizeMode, Video } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,27 +20,20 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
-    // Keselamatan fallback timer (contoh: 6 saat) jika video tamat lebih awal atau lambat
+    // Masa paparan imej splash (contoh: 2.5 saat) sebelum beralih ke halaman seterusnya
     const timer = setTimeout(() => {
       handleNavigate();
-    }, 6000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, [user, loading, router]);
 
   return (
     <View style={styles.container} testID="splash-screen">
-      <Video
-        source={require("../assets/videos/intro.mov")}
-        style={styles.video}
-        resizeMode={ResizeMode.COVER}
-        shouldPlay
-        isLooping={false}
-        onPlaybackStatusUpdate={(status) => {
-          if (status.isLoaded && status.didJustFinish) {
-            handleNavigate();
-          }
-        }}
+      <ImageBackground
+        source={require("../assets/IMG_5492.jpeg")}
+        style={styles.image}
+        resizeMode="cover"
       />
     </View>
   );
@@ -54,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  video: {
+  image: {
     width: width,
     height: height,
     position: "absolute",
