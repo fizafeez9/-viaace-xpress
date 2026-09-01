@@ -84,11 +84,6 @@ export default function Home() {
                 {t("tagline_sub")} <Text style={{ color: colors.brandPrimary, fontWeight: "800" }}>ViaAce Xpress</Text>.
               </Text>
             </View>
-            <Image
-              source={{ uri: "https://images.unsplash.com/photo-1647221597996-54f3d0f73809?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxkZWxpdmVyeSUyMHBhcmNlbCUyMGJveCUyMDNkJTIwaWxsdXN0cmF0aW9ufGVufDB8fHx8MTc4NzIzMjQ2MHww&ixlib=rb-4.1.0&q=85" }}
-              style={styles.heroImg}
-              contentFit="contain"
-            />
           </LinearGradient>
 
           <View style={styles.card}>
@@ -242,7 +237,6 @@ const styles = StyleSheet.create({
   hero: { flexDirection: "row", padding: spacing.lg, borderRadius: radius.lg, alignItems: "center", ...shadow.card, marginBottom: spacing.lg },
   heroTitle: { fontSize: 22, fontWeight: "800", color: colors.onSurface, lineHeight: 28 },
   heroSub: { fontSize: 13, color: colors.onSurfaceSecondary, marginTop: spacing.sm, lineHeight: 18 },
-  heroImg: { width: 110, height: 110, marginLeft: spacing.sm },
   card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: colors.divider, ...shadow.card },
   locationsBlock: { gap: spacing.md },
   locRow: { flexDirection: "row", gap: spacing.sm },
