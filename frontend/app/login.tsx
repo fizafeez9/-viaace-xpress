@@ -29,8 +29,8 @@ export default function Login() {
     setBusy(true);
     try { 
       await loginMock(guestName.trim() || "Tetamu"); 
-      // Dihalakan terus ke fail quote.tsx di dalam folder order
-      router.replace("/order/quote"); 
+      // Dihalakan semula ke laluan tab utama yang memuatkan skrin tempahan
+      router.replace("/(tabs)"); 
     } finally { 
       setBusy(false); 
     }
