@@ -19,9 +19,16 @@ export default function Login() {
     setBusy(true);
     try { await loginWithGoogle(); router.replace("/(tabs)"); } finally { setBusy(false); }
   };
+
   const doGuest = async () => {
     setBusy(true);
-    try { await loginMock(guestName.trim() || "Tetamu"); router.replace("/(tabs)"); } finally { setBusy(false); }
+    try { 
+      await loginMock(guestName.trim() || "Tetamu"); 
+      // Ditukar dari "/(tabs)" ke "/order" supaya terus ke halaman order
+      router.replace("/order"); 
+    } finally { 
+      setBusy(false); 
+    }
   };
 
   return (
