@@ -17,15 +17,20 @@ export default function Login() {
 
   const doGoogle = async () => {
     setBusy(true);
-    try { await loginWithGoogle(); router.replace("/(tabs)"); } finally { setBusy(false); }
+    try { 
+      await loginWithGoogle(); 
+      router.replace("/(tabs)"); 
+    } finally { 
+      setBusy(false); 
+    }
   };
 
   const doGuest = async () => {
     setBusy(true);
     try { 
       await loginMock(guestName.trim() || "Tetamu"); 
-      // Ditukar dari "/(tabs)" ke "/order" supaya terus ke halaman order
-      router.replace("/order"); 
+      // Dihalakan terus ke fail quote.tsx di dalam folder order
+      router.replace("/order/quote"); 
     } finally { 
       setBusy(false); 
     }
