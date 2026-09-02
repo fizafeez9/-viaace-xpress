@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, KeyboardAvoidingView, Platform,
+  View, Text, StyleSheet, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 
 import { colors, spacing, radius, shadow } from "@/src/theme/tokens";
@@ -17,12 +17,30 @@ import { BrandLogo } from "@/src/components/BrandLogo";
 
 const KL = { lat: 3.139, lng: 101.6869 };
 
+type FavAddr = { id: string; label: string; address: string; lat?: number; lng?: number; icon?: string };
+
 export default function Home() {
   const { t } = useLang();
   const router = useRouter();
   const { draft, setDraft } = useOrderDraft();
   const { authFetch } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [favs, setFavs] = useState<FavAddr[]>([]);
+
+  const loadFavs = async () => {
+    try {
+      const r = await authFetch("/api/addresses");
+      if (r.ok) setFavs(await r.json());
+    } catch {}
+  };
+  useFocusEffect(useCallback(() => { loadFavs(); }, []));
+
+  const useFav = (f: FavAddr, target: "pickup" | "dest") => {
+    Haptics.selectionAsync();
+    const loc = { label: target === "pickup" ? "Pickup" : "Destinasi", address: f.address, lat: f.lat, lng: f.lng };
+    if (target === "pickup") setDraft((d) => ({ ...d, pickup: loc }));
+    else setDraft((d) => { const stops = [...d.stops]; stops[0] = loc; return { ...d, stops }; });
+  };
 
   const setSize = (s: Size) => { Haptics.selectionAsync(); setDraft((d) => ({ ...d, size: s })); };
   const setWeight = (w: Weight) => { Haptics.selectionAsync(); setDraft((d) => ({ ...d, weight: w })); };
@@ -85,6 +103,35 @@ export default function Home() {
               </Text>
             </View>
           </LinearGradient>
+
+          {/* Favourites */}
+          {favs.length > 0 && (
+            <View style={styles.favSection}>
+              <Text style={styles.favTitle}>⭐ {t("favorites")}</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.favRow}
+              >
+                {favs.map((f) => (
+                  <Pressable
+                    key={f.id}
+                    testID={`fav-${f.id}`}
+                    onPress={() => useFav(f, "pickup")}
+                    onLongPress={() => useFav(f, "dest")}
+                    style={styles.favChip}
+                  >
+                    <Ionicons name={(f.icon || "location") as any} size={16} color={colors.brandSecondary} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.favChipLabel} numberOfLines={1}>{f.label}</Text>
+                      <Text style={styles.favChipAddr} numberOfLines={1}>{f.address}</Text>
+                    </View>
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <Text style={styles.favHint}>Ketik untuk pickup • tekan-lama untuk destinasi</Text>
+            </View>
+          )}
 
           <View style={styles.card}>
             <View style={styles.locationsBlock}>
@@ -232,7 +279,7 @@ const styles = StyleSheet.create({
   },
   dot: { position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.error },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  hero: { flexDirection: "row", padding: spacing.lg, borderRadius: radius.lg, alignItems: "center", ...shadow.card, marginBottom: spacing.lg },
+  hero: { flexDirection: "row", padding: spacing.lg, borderRadius: radius.lg, alignItems: "center", ...shadow.card, marginBottom: spacing.md },
   heroTitle: { fontSize: 22, fontWeight: "800", color: colors.onSurface, lineHeight: 28 },
   heroSub: { fontSize: 13, color: colors.onSurfaceSecondary, marginTop: spacing.sm, lineHeight: 18 },
   card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: colors.divider, ...shadow.card },
@@ -265,4 +312,11 @@ const styles = StyleSheet.create({
   vImg: { width: 60, height: 40, borderRadius: 8, backgroundColor: colors.surfaceSecondary },
   cta: { marginTop: spacing.xl, flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: colors.brandPrimary, height: 54, borderRadius: radius.md, ...shadow.cta },
   ctaTxt: { fontSize: 15, fontWeight: "900", color: colors.onBrandPrimary, letterSpacing: 1, marginRight: 8 },
+  favSection: { marginBottom: spacing.md },
+  favTitle: { fontSize: 14, fontWeight: "800", color: colors.onSurface, marginBottom: spacing.sm },
+  favRow: { gap: spacing.sm, paddingRight: spacing.lg },
+  favChip: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.divider, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.md, maxWidth: 220, minWidth: 140, ...shadow.card, flexShrink: 0 },
+  favChipLabel: { fontSize: 12, fontWeight: "800", color: colors.onSurface },
+  favChipAddr: { fontSize: 10, color: colors.onSurfaceSecondary, marginTop: 1 },
+  favHint: { fontSize: 10, color: colors.muted, marginTop: 6 },
 });
