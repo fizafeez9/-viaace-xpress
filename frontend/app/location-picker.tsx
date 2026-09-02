@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { colors, spacing, radius, shadow } from "@/src/theme/tokens";
 import { useLang } from "@/src/context/LanguageContext";
 import { useOrderDraft } from "@/src/context/OrderDraftContext";
+import { useAuth } from "@/src/context/AuthContext";
 import MapPicker from "@/src/components/MapPicker";
 
 const KL_PLACES: { name: string; sub: string; lat: number; lng: number }[] = [
@@ -33,11 +34,14 @@ export default function LocationPicker() {
   const { field } = useLocalSearchParams<{ field: string }>();
   const router = useRouter();
   const { t } = useLang();
-  const { setDraft } = useOrderDraft();
+  const { draft, setDraft } = useOrderDraft();
+  const { authFetch } = useAuth();
   const [query, setQuery] = useState("");
   const [coord, setCoord] = useState<{ lat: number; lng: number }>({ lat: 3.139, lng: 101.6869 });
   const [address, setAddress] = useState("");
   const [mode, setMode] = useState<"search" | "map">("search");
+  const [saveAsFav, setSaveAsFav] = useState(false);
+  const [favLabel, setFavLabel] = useState("");
 
   const isPickup = field === "pickup";
   const stopIdx = !isPickup && field?.startsWith("stop-") ? parseInt(field.split("-")[1], 10) : -1;
@@ -53,11 +57,12 @@ export default function LocationPicker() {
   const pick = (item: { name: string; sub: string; lat: number; lng: number }) => {
     setCoord({ lat: item.lat, lng: item.lng });
     setAddress(`${item.name}, ${item.sub}`);
+    if (!favLabel) setFavLabel(item.name);
     setMode("map");
   };
 
   const confirm = () => {
-    const loc = { label: isPickup ? "Pickup" : "Destinasi", address: address || query, lat: coord.lat, lng: coord.lng };
+    const loc = { label: isPickup ? "Pickup" : `Destinasi`, address: address || query, lat: coord.lat, lng: coord.lng };
     if (isPickup) {
       setDraft((d) => ({ ...d, pickup: { ...d.pickup, ...loc } }));
     } else if (stopIdx >= 0) {
@@ -66,6 +71,19 @@ export default function LocationPicker() {
         stops[stopIdx] = { ...(stops[stopIdx] || {}), ...loc };
         return { ...d, stops };
       });
+    }
+    if (saveAsFav && (address || query) && favLabel.trim()) {
+      authFetch("/api/addresses", {
+        method: "POST",
+        body: JSON.stringify({
+          label: favLabel.trim(),
+          address: address || query,
+          lat: coord.lat, lng: coord.lng,
+          icon: favLabel.toLowerCase().includes("rumah") || favLabel.toLowerCase().includes("home") ? "home"
+              : favLabel.toLowerCase().includes("pejabat") || favLabel.toLowerCase().includes("office") ? "briefcase"
+              : "location",
+        }),
+      }).catch(() => {});
     }
     router.back();
   };
@@ -127,7 +145,7 @@ export default function LocationPicker() {
           <FlatList
             data={filtered}
             keyExtractor={(i, idx) => i.name + idx}
-            contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm, paddingBottom: 120 }}
+            contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm, paddingBottom: 140 }}
             keyboardShouldPersistTaps="handled"
             renderItem={({ item }) => (
               <Pressable testID={`loc-item-${item.name}`} onPress={() => pick(item)} style={styles.item}>
@@ -173,6 +191,24 @@ export default function LocationPicker() {
           style={styles.addrInput}
         />
         <Pressable
+          testID="fav-toggle"
+          onPress={() => setSaveAsFav((s) => !s)}
+          style={styles.favToggle}
+        >
+          <Ionicons name={saveAsFav ? "checkbox" : "square-outline"} size={20} color={saveAsFav ? colors.brandPrimary : colors.muted} />
+          <Text style={styles.favToggleTxt}>{t("add_favorite")}</Text>
+        </Pressable>
+        {saveAsFav && (
+          <TextInput
+            testID="fav-label"
+            value={favLabel}
+            onChangeText={setFavLabel}
+            placeholder={t("fav_label_ph")}
+            placeholderTextColor={colors.muted}
+            style={styles.addrInput}
+          />
+        )}
+        <Pressable
           testID="loc-confirm"
           onPress={confirm}
           disabled={!address && !query}
@@ -207,6 +243,8 @@ const styles = StyleSheet.create({
   coordTxt: { flex: 1, fontSize: 12, color: colors.onSurface, fontWeight: "600" },
   footer: { padding: spacing.lg, borderTopWidth: 1, borderTopColor: colors.divider, gap: spacing.sm, backgroundColor: colors.surface },
   addrInput: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, color: colors.onSurface },
+  favToggle: { flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 },
+  favToggleTxt: { fontSize: 13, fontWeight: "700", color: colors.onSurface },
   cta: { backgroundColor: colors.brandPrimary, height: 50, borderRadius: radius.md, alignItems: "center", justifyContent: "center", ...shadow.cta },
   ctaTxt: { fontWeight: "900", color: colors.onBrandPrimary, letterSpacing: 0.5 },
 });
