@@ -40,6 +40,13 @@ export default function Akaun() {
           <Row testID="row-addresses" icon="location-outline" label={t("saved_addresses")} />
           <View style={styles.divider} />
           <Row testID="row-payments" icon="card-outline" label={t("payment_methods")} />
+          <View style={styles.divider} />
+          <Row
+            testID="row-rider-app"
+            icon="bicycle-outline"
+            label={t("login_rider")}
+            onPress={() => router.push("/rider/login")}
+          />
         </View>
 
         <View style={styles.card}>
@@ -80,7 +87,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, height: 54 },
   rowLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: colors.onSurface },
   divider: { height: 1, backgroundColor: colors.divider, marginLeft: spacing.xxl + spacing.sm },
-  langSwitch: { flexDirection: "row", backgroundColor: colors.surfaceSecondary, borderRadius: radius.pill, padding: 3 },
+  langSwitch: { flexDirection: "row", backgroundColor: kad ? ... : colors.surfaceSecondary, borderRadius: radius.pill, padding: 3 }, // standard styling
   langOpt: { paddingHorizontal: 10, height: 26, borderRadius: radius.pill, alignItems: "center", justifyContent: "center" },
   langOptActive: { backgroundColor: colors.brandPrimary },
   langTxt: { fontSize: 11, fontWeight: "800", color: colors.onSurfaceSecondary },
