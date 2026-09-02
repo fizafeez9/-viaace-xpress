@@ -29,7 +29,6 @@ export default function Login() {
     setBusy(true);
     try { 
       await loginMock(guestName.trim() || "Tetamu"); 
-      // Dihalakan semula ke laluan tab utama yang memuatkan skrin tempahan
       router.replace("/(tabs)"); 
     } finally { 
       setBusy(false); 
@@ -41,14 +40,12 @@ export default function Login() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
           
-          {/* Bahagian Header / Logo */}
           <View style={styles.headerContainer}>
             <BrandLogo width={220} height={65} />
             <Text style={styles.title}>Selamat Datang</Text>
             <Text style={styles.sub}>Log masuk ke akaun ViaAce Xpress anda untuk mula menempah penghantaran.</Text>
           </View>
 
-          {/* Bahagian Borang & Tindakan Log Masuk */}
           <View style={styles.formContainer}>
             <Pressable
               testID="login-google-button"
@@ -83,6 +80,24 @@ export default function Login() {
               >
                 <Text style={styles.primaryTxt}>{t("login_mock")}</Text>
               </Pressable>
+
+              <Pressable
+                testID="login-rider-button"
+                onPress={() => router.push("/rider/login")}
+                style={styles.ghostBtn}
+              >
+                <Ionicons name="bicycle-outline" size={18} color={colors.onSurface} />
+                <Text style={styles.ghostTxt}>{t("login_rider")}</Text>
+              </Pressable>
+
+              <Pressable
+                testID="login-phone-button"
+                disabled
+                style={[styles.ghostBtn, { opacity: 0.5 }]}
+              >
+                <Ionicons name="call-outline" size={18} color={colors.onSurface} />
+                <Text style={styles.ghostTxt}>{t("login_phone")}</Text>
+              </Pressable>
             </View>
 
             <Text style={styles.legal}>© {new Date().getFullYear()} ViaAce Xpress. Hak cipta terpelihara.</Text>
@@ -110,5 +125,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 50, paddingHorizontal: spacing.lg, color: colors.onSurface, backgroundColor: colors.surface, fontSize: 15 },
   primaryBtn: { backgroundColor: colors.brandPrimary, height: 52, borderRadius: radius.md, alignItems: "center", justifyContent: "center", ...shadow.cta },
   primaryTxt: { fontSize: 15, fontWeight: "800", color: colors.onBrandPrimary, letterSpacing: 0.5 },
+  ghostBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderWidth: 1, borderColor: colors.border, height: 48, borderRadius: radius.md, backgroundColor: colors.surfaceSecondary },
+  ghostTxt: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
   legal: { textAlign: "center", color: colors.muted, marginTop: spacing.xxl, fontSize: 12 },
 });
