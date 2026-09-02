@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Image, Platform } from "react-native";
+import { StyleSheet, View, Image, Platform, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
+
+const { width, height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
@@ -10,7 +12,6 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
-    // Timer ditetapkan tepat kepada 4 saat sebelum ke skrin seterusnya
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
@@ -24,7 +25,7 @@ export default function Index() {
 
   return (
     <View style={styles.container} testID="splash-screen">
-      {/* Lapisan tekstur organik gaya konkrit gelap kasar (Grunge/Concrete Noise) */}
+      {/* Lapisan SVG khas web sahaja supaya aplikasi telefon tidak crash */}
       {Platform.OS === 'web' && (
         <View style={styles.concreteTextureOverlay} pointerEvents="none">
           <svg style={{ position: 'absolute', width: 0, height: 0 }}>
@@ -63,10 +64,11 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Warna asas kelabu gelap konkrit persis dalam gambar rujukan
     backgroundColor: "#1c1e21",
     alignItems: "center",
     justifyContent: "center",
+    width: width,
+    height: height,
     ...(Platform.OS === 'web' && {
       backgroundImage: 'radial-gradient(circle at center, #26292e 0%, #151719 100%)',
     } as any),
@@ -82,8 +84,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   logoImage: {
-    width: 380,
-    height: 130,
+    width: 280,
+    height: 100,
     resizeMode: "contain",
   },
 });
