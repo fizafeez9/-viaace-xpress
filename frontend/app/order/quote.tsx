@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -17,6 +17,32 @@ export default function Quote() {
   const router = useRouter();
   const [pay, setPay] = useState<"card" | "tng">("card");
   const [busy, setBusy] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promo, setPromo] = useState<{ code: string; discount: number; label: string } | null>(null);
+  const [promoErr, setPromoErr] = useState("");
+
+  const applyPromo = async () => {
+    setPromoErr("");
+    if (!promoCode.trim() || !quote) return;
+    try {
+      const r = await authFetch("/api/promo/validate", {
+        method: "POST",
+        body: JSON.stringify({ code: promoCode.trim(), total: quote.total }),
+      });
+      if (r.ok) {
+        setPromo(await r.json());
+      } else {
+        const err = await r.json().catch(() => ({}));
+        setPromoErr(err.detail || "Kod tidak sah");
+        setPromo(null);
+      }
+    } catch {
+      setPromoErr("Ralat rangkaian");
+    }
+  };
+
+  const removePromo = () => { setPromo(null); setPromoCode(""); setPromoErr(""); };
+  const finalTotal = quote ? Math.max(0, quote.total - (promo?.discount || 0)) : 0;
 
   const place = async () => {
     if (!quote) return;
@@ -27,6 +53,7 @@ export default function Quote() {
         body: JSON.stringify({
           pickup: draft.pickup, stops: draft.stops, size: draft.size, weight: draft.weight,
           vehicle: draft.vehicle, payment_method: pay, notes: draft.notes, quote,
+          promo_code: promo?.code || null,
         }),
       });
       const order = await r.json();
@@ -73,13 +100,59 @@ export default function Quote() {
           </View>
         </View>
 
+        {/* Bahagian Kod Promo */}
+        <View style={styles.card}>
+          <Text style={styles.section}>{t("promo_title") || "Kod Promo"}</Text>
+          <View style={styles.promoRow}>
+            <TextInput
+              testID="promo-input"
+              value={promoCode}
+              onChangeText={setPromoCode}
+              placeholder={t("promo_ph") || "Masukkan kod promo"}
+              placeholderTextColor={colors.muted}
+              style={styles.promoInput}
+              autoCapitalize="characters"
+              editable={!promo}
+            />
+            {promo ? (
+              <Pressable testID="promo-remove-btn" onPress={removePromo} style={styles.promoBtnGhost}>
+                <Text style={styles.promoBtnGhostTxt}>{t("promo_remove") || "Buang"}</Text>
+              </Pressable>
+            ) : (
+              <Pressable testID="promo-apply-btn" onPress={applyPromo} style={styles.promoBtn}>
+                <Text style={styles.promoBtnTxt}>{t("promo_apply") || "Guna"}</Text>
+              </Pressable>
+            )}
+          </View>
+          {promoErr ? <Text style={styles.promoErr}>{promoErr}</Text> : null}
+          {promo && (
+            <View style={[styles.appliedPromoBadge, { marginTop: spacing.md }]}>
+              <View style={{ flex: 1 }}>
+                <View style={styles.promoApplied}>
+                  <Ionicons name="checkmark-circle" size={18} color={colors.success} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.promoAppliedTxt}>{promo.label}</Text>
+                    <Text style={styles.promoSaved}>Jimat RM {promo.discount.toFixed(2)}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+        </View>
+
         <View style={styles.card}>
           <View style={styles.kv}><Text style={styles.k}>{t("base_fare")}</Text><Text style={styles.v}>RM {quote.base_fare.toFixed(2)}</Text></View>
           <View style={styles.kv}><Text style={styles.k}>{t("distance_fare")} ({quote.distance_km} km)</Text><Text style={styles.v}>RM {quote.distance_fare.toFixed(2)}</Text></View>
           <View style={styles.kv}><Text style={styles.k}>{t("surcharge")}</Text><Text style={styles.v}>RM {quote.size_surcharge.toFixed(2)}</Text></View>
+          {promo && (
+            <View style={styles.kv}>
+              <Text style={[styles.k, { color: colors.success, fontWeight: "700" }]}>{t("discount") || "Diskaun"}</Text>
+              <Text style={[styles.v, { color: colors.success }]}>-RM {promo.discount.toFixed(2)}</Text>
+            </View>
+          )}
           <View style={styles.kv}><Text style={styles.k}>{t("eta")}</Text><Text style={styles.v}>~{quote.eta_min} min</Text></View>
           <View style={styles.divider} />
-          <View style={styles.kv}><Text style={styles.total}>{t("total")}</Text><Text style={styles.totalV}>RM {quote.total.toFixed(2)}</Text></View>
+          <View style={styles.kv}><Text style={styles.total}>{t("total")}</Text><Text style={styles.totalV}>RM {finalTotal.toFixed(2)}</Text></View>
         </View>
 
         <View style={styles.card}>
@@ -113,12 +186,13 @@ export default function Quote() {
           onPress={place}
           style={({ pressed }) => [styles.cta, pressed && { opacity: 0.9 }]}
         >
-          <Text style={styles.ctaTxt}>{busy ? "..." : `${t("place_order")}  •  RM ${quote.total.toFixed(2)}`}</Text>
+          <Text style={styles.ctaTxt}>{busy ? "..." : `${t("place_order")}  •  RM ${finalTotal.toFixed(2)}`}</Text>
         </Pressable>
       </View>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   header: { height: 56, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.divider },
@@ -142,4 +216,16 @@ const styles = StyleSheet.create({
   footer: { position: "absolute", left: 0, right: 0, bottom: 0, padding: spacing.lg, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.divider },
   cta: { backgroundColor: colors.brandPrimary, height: 54, borderRadius: radius.md, alignItems: "center", justifyContent: "center", ...shadow.cta },
   ctaTxt: { fontWeight: "900", color: colors.onBrandPrimary, fontSize: 14, letterSpacing: 0.5 },
+  promoRow: { flexDirection: "row", gap: spacing.sm },
+  promoInput: { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, color: colors.onSurface, fontSize: 14, letterSpacing: 1 },
+  promoBtn: { backgroundColor: colors.brandSecondary, paddingHorizontal: spacing.lg, height: 46, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  promoBtnTxt: { color: "#fff", fontWeight: "800" },
+  promoBtnGhost: { paddingHorizontal: spacing.md, height: 36, borderRadius: radius.md, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.error },
+  promoBtnGhostTxt: { color: colors.error, fontWeight: "800", fontSize: 12 },
+  promoApplied: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surfaceTertiary, padding: spacing.md, borderRadius: radius.md },
+  promoAppliedTxt: { fontWeight: "800", color: colors.onSurface },
+  promoSaved: { fontSize: 12, color: colors.success, fontWeight: "700", marginTop: 2 },
+  promoErr: { marginTop: spacing.sm, color: colors.error, fontSize: 12 },
+  promoHint: { marginTop: spacing.sm, color: colors.muted, fontSize: 11 },
+  appliedPromoBadge: {},
 });
