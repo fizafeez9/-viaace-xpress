@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Platform,
+  View, Text, StyleSheet, ScrollView, Pressable, KeyboardAvoidingView, Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -96,14 +96,15 @@ export default function Home() {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.stepLabel}>{t("step_from")}</Text>
                   <View style={styles.inputRow}>
-                    <TextInput
+                    <Pressable
                       testID="pickup-input"
-                      placeholder={t("ph_pickup")}
-                      placeholderTextColor={colors.muted}
-                      value={draft.pickup.address}
-                      onChangeText={(v) => setDraft((d) => ({ ...d, pickup: { ...d.pickup, address: v } }))}
-                      style={styles.input}
-                    />
+                      onPress={() => router.push({ pathname: "/location-picker", params: { type: "pickup" } })}
+                      style={[styles.inputPressable, { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, justifyContent: "center", backgroundColor: colors.surface }]}
+                    >
+                      <Text style={[styles.inputTxt, !draft.pickup.address && styles.placeholderText]} numberOfLines={1}>
+                        {draft.pickup.address || t("ph_pickup")}
+                      </Text>
+                    </Pressable>
                     <Pressable testID="my-location-btn" onPress={useMyLocation} style={styles.rightBtn}>
                       <Ionicons name="locate" size={18} color={colors.onSurface} />
                       <Text style={styles.rightBtnTxt}>{t("my_location")}</Text>
@@ -123,18 +124,15 @@ export default function Home() {
                       {idx === 0 ? t("step_to") : `${idx + 2}. Henti ${idx + 1}`}
                     </Text>
                     <View style={styles.inputRow}>
-                      <TextInput
+                      <Pressable
                         testID={idx === 0 ? "dest-input" : `stop-${idx}-input`}
-                        placeholder={t("ph_dest")}
-                        placeholderTextColor={colors.muted}
-                        value={stop.address}
-                        onChangeText={(v) => setDraft((d) => {
-                          const stops = [...d.stops];
-                          stops[idx] = { ...stops[idx], address: v };
-                          return { ...d, stops };
-                        })}
-                        style={styles.input}
-                      />
+                        onPress={() => router.push({ pathname: "/location-picker", params: { type: "stop", index: idx } })}
+                        style={[styles.inputPressable, { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, justifyContent: "center", backgroundColor: colors.surface }]}
+                      >
+                        <Text style={[styles.inputTxt, !stop.address && styles.placeholderText]} numberOfLines={1}>
+                          {stop.address || t("ph_dest")}
+                        </Text>
+                      </Pressable>
                       {idx === 0 && (
                         <Pressable testID="add-stop-btn" onPress={addStop} style={styles.rightBtn}>
                           <Ionicons name="add-circle-outline" size={18} color={colors.onSurface} />
@@ -244,7 +242,9 @@ const styles = StyleSheet.create({
   timelineLine: { flex: 1, width: 2, backgroundColor: colors.border, marginVertical: 4 },
   stepLabel: { fontSize: 15, fontWeight: "700", color: colors.onSurface, marginBottom: 6 },
   inputRow: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  input: { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, color: colors.onSurface, backgroundColor: colors.surface },
+  inputPressable: { flexDirection: "row", alignItems: "center", gap: 8 },
+  inputTxt: { flex: 1, fontSize: 14, color: colors.onSurface },
+  placeholderText: { color: colors.muted },
   rightBtn: { flexDirection: "row", alignItems: "center", gap: 4 },
   rightBtnTxt: { fontSize: 12, fontWeight: "700", color: colors.onSurface },
   section: { fontSize: 15, fontWeight: "700", color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
