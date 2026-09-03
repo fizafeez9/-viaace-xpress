@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Image, Platform, Dimensions } from "react-native";
+import { StyleSheet, View, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/src/context/AuthContext";
 
@@ -12,6 +12,7 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
+    // Timer ditetapkan tepat kepada 4 saat sebelum ke skrin seterusnya
     const timer = setTimeout(() => {
       if (user) {
         router.replace("/(tabs)");
@@ -25,32 +26,6 @@ export default function Index() {
 
   return (
     <View style={styles.container} testID="splash-screen">
-      {/* Lapisan SVG khas web sahaja supaya aplikasi telefon tidak crash */}
-      {Platform.OS === 'web' && (
-        <View style={styles.concreteTextureOverlay} pointerEvents="none">
-          <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-            <filter id="noiseFilter">
-              <feTurbulence 
-                type="fractalNoise" 
-                baseFrequency="0.8" 
-                numOctaves="4" 
-                stitchTiles="stitch" 
-              />
-              <feColorMatrix 
-                type="matrix" 
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.15 0" 
-              />
-            </filter>
-          </svg>
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            filter: 'url(#noiseFilter)',
-            opacity: 0.85
-          }} />
-        </View>
-      )}
-
       <View style={styles.logoContainer}>
         <Image
           source={require("../assets/E1489C85-0D74-4932-9F61-F2CB04301804.png")}
@@ -64,24 +39,16 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // Warna asas kelabu gelap konkrit persis dalam gambar rujukan
     backgroundColor: "#1c1e21",
     alignItems: "center",
     justifyContent: "center",
     width: width,
     height: height,
-    ...(Platform.OS === 'web' && {
-      backgroundImage: 'radial-gradient(circle at center, #26292e 0%, #151719 100%)',
-    } as any),
-  },
-  concreteTextureOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    overflow: 'hidden',
-    zIndex: 1,
   },
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 2,
   },
   logoImage: {
     width: 280,
