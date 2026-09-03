@@ -75,6 +75,7 @@ export default function Akaun() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   header: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
@@ -87,7 +88,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, height: 54 },
   rowLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: colors.onSurface },
   divider: { height: 1, backgroundColor: colors.divider, marginLeft: spacing.xxl + spacing.sm },
-  langSwitch: { flexDirection: "row", backgroundColor: kad ? ... : colors.surfaceSecondary, borderRadius: radius.pill, padding: 3 }, // standard styling
+  langSwitch: { 
+    flexDirection: "row", 
+    backgroundColor: colors.surfaceSecondary, 
+    borderRadius: radius.pill, 
+    padding: 3 
+  },
   langOpt: { paddingHorizontal: 10, height: 26, borderRadius: radius.pill, alignItems: "center", justifyContent: "center" },
   langOptActive: { backgroundColor: colors.brandPrimary },
   langTxt: { fontSize: 11, fontWeight: "800", color: colors.onSurfaceSecondary },
