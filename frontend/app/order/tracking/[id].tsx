@@ -105,19 +105,21 @@ export default function Tracking() {
           </View>
         )}
 
-        <View style={styles.timeline}>
-          {STEPS.map((s, i) => (
-            <View key={s} style={styles.tlItem}>
-              <View style={[styles.tlDot, i <= stepIdx && styles.tlDotDone]}>
-                {i <= stepIdx && <Ionicons name="checkmark" size={12} color="#000" />}
+        <View style={styles.timelineContainer}>
+          <View style={styles.timeline}>
+            {STEPS.map((s, i) => (
+              <View key={s} style={styles.tlItem}>
+                <View style={[styles.tlDot, i <= stepIdx && styles.tlDotDone]}>
+                  {i <= stepIdx && <Ionicons name="checkmark" size={12} color="#000" />}
+                </View>
+                <Text style={[styles.tlTxt, i <= stepIdx && styles.tlTxtDone]}>{t(s as any)}</Text>
+                {i < STEPS.length - 1 && <View style={[styles.tlLine, i <= stepIdx && styles.tlLineDone]} />}
               </View>
-              <Text style={[styles.tlTxt, i <= stepIdx && styles.tlTxtDone]}>{t(s as any)}</Text>
-              {i < STEPS.length - 1 && <View style={[styles.tlLine, i <= stepIdx && styles.tlLineDone]} />}
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
 
-        <ScrollView contentContainerStyle={{ gap: spacing.sm, paddingVertical: spacing.sm }} style={{ maxHeight: 120 }}>
+        <ScrollView contentContainerStyle={{ gap: spacing.xs, paddingVertical: 2 }} style={{ maxHeight: 90 }}>
           <View style={styles.locRow}>
             <Ionicons name="ellipse" size={12} color={colors.brandPrimary} />
             <Text style={styles.locTxt} numberOfLines={1}>{order.pickup?.address}</Text>
@@ -155,8 +157,8 @@ const styles = StyleSheet.create({
   iconBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", ...shadow.card },
   oidPill: { paddingHorizontal: spacing.md, height: 34, borderRadius: radius.pill, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", ...shadow.card },
   oidTxt: { fontSize: 12, fontWeight: "800", color: colors.onSurface },
-  sheet: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg, gap: spacing.md, ...shadow.cta },
-  grabber: { alignSelf: "center", width: 40, height: 4, borderRadius: 2, backgroundColor: colors.divider, marginBottom: spacing.sm },
+  sheet: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg, gap: spacing.sm, ...shadow.cta },
+  grabber: { alignSelf: "center", width: 40, height: 4, borderRadius: 2, backgroundColor: colors.divider, marginBottom: 2 },
   statusBanner: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.surfaceTertiary, padding: spacing.md, borderRadius: radius.md },
   statusIndicator: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.brandPrimary },
   statusText: { fontSize: 14, fontWeight: "800", color: colors.onSurface },
@@ -165,18 +167,19 @@ const styles = StyleSheet.create({
   riderName: { fontWeight: "800", color: colors.onSurface },
   riderMeta: { fontSize: 12, color: colors.onSurfaceSecondary, marginTop: 2 },
   roundBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brandPrimary, alignItems: "center", justifyContent: "center" },
-  timeline: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 4 },
+  timelineContainer: { marginTop: spacing.sm, marginBottom: spacing.xs },
+  timeline: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 4, height: 40 },
   tlItem: { alignItems: "center", flexDirection: "row" },
   tlDot: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   tlDotDone: { backgroundColor: colors.brandPrimary },
-  tlTxt: { fontSize: 9, color: colors.muted, position: "absolute", top: 26, width: 60, textAlign: "center", marginLeft: -19 },
+  tlTxt: { fontSize: 9, color: colors.muted, position: "absolute", top: 24, width: 60, textAlign: "center", marginLeft: -19 },
   tlTxtDone: { color: colors.onSurface, fontWeight: "700" },
   tlLine: { width: 20, height: 2, backgroundColor: colors.divider, marginHorizontal: 2 },
   tlLineDone: { backgroundColor: colors.brandPrimary },
   locRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: 2 },
   locTxt: { fontSize: 13, color: colors.onSurface, flex: 1 },
-  primaryBtn: { marginTop: spacing.sm, backgroundColor: colors.brandPrimary, height: 50, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  primaryBtn: { marginTop: 4, backgroundColor: colors.brandPrimary, height: 48, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
   primaryTxt: { fontWeight: "900", color: colors.onBrandPrimary },
-  cancelBtn: { marginTop: spacing.sm, height: 50, borderRadius: radius.md, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.error },
+  cancelBtn: { marginTop: 4, height: 48, borderRadius: radius.md, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.error },
   cancelTxt: { fontWeight: "800", color: colors.error },
 });
