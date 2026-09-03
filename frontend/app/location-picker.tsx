@@ -55,14 +55,24 @@ export default function LocationPicker() {
   }, [query]);
 
   const pick = (item: { name: string; sub: string; lat: number; lng: number }) => {
+    const fullAddress = `${item.name}, ${item.sub}`;
     setCoord({ lat: item.lat, lng: item.lng });
-    setAddress(`${item.name}, ${item.sub}`);
+    setAddress(fullAddress);
     if (!favLabel) setFavLabel(item.name);
     setMode("map");
   };
 
   const confirm = () => {
-    const loc = { label: isPickup ? "Pickup" : `Destinasi`, address: address || query, lat: coord.lat, lng: coord.lng };
+    const finalAddress = address.trim() || query.trim();
+    if (!finalAddress) return;
+
+    const loc = { 
+      label: isPickup ? "Pickup" : `Destinasi`, 
+      address: finalAddress, 
+      lat: coord.lat, 
+      lng: coord.lng 
+    };
+
     if (isPickup) {
       setDraft((d) => ({ ...d, pickup: { ...d.pickup, ...loc } }));
     } else if (stopIdx >= 0) {
@@ -72,12 +82,13 @@ export default function LocationPicker() {
         return { ...d, stops };
       });
     }
-    if (saveAsFav && (address || query) && favLabel.trim()) {
+
+    if (saveAsFav && finalAddress && favLabel.trim()) {
       authFetch("/api/addresses", {
         method: "POST",
         body: JSON.stringify({
           label: favLabel.trim(),
-          address: address || query,
+          address: finalAddress,
           lat: coord.lat, lng: coord.lng,
           icon: favLabel.toLowerCase().includes("rumah") || favLabel.toLowerCase().includes("home") ? "home"
               : favLabel.toLowerCase().includes("pejabat") || favLabel.toLowerCase().includes("office") ? "briefcase"
