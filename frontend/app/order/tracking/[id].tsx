@@ -105,32 +105,34 @@ export default function Tracking() {
           </View>
         )}
 
-        <View style={styles.timelineContainer}>
-          <View style={styles.timeline}>
-            {STEPS.map((s, i) => (
-              <View key={s} style={styles.tlItem}>
+        <View style={styles.timeline}>
+          {STEPS.map((s, i) => (
+            <View key={s} style={styles.tlItem}>
+              <View style={styles.tlNodeRow}>
                 <View style={[styles.tlDot, i <= stepIdx && styles.tlDotDone]}>
-                  {i <= stepIdx && <Ionicons name="checkmark" size={12} color="#000" />}
+                  {i <= stepIdx && <Ionicons name="checkmark" size={10} color="#000" />}
                 </View>
-                <Text style={[styles.tlTxt, i <= stepIdx && styles.tlTxtDone]}>{t(s as any)}</Text>
                 {i < STEPS.length - 1 && <View style={[styles.tlLine, i <= stepIdx && styles.tlLineDone]} />}
               </View>
-            ))}
-          </View>
+              <Text style={[styles.tlTxt, i <= stepIdx && styles.tlTxtDone]} numberOfLines={2}>
+                {t(s as any)}
+              </Text>
+            </View>
+          ))}
         </View>
 
-        <ScrollView contentContainerStyle={{ gap: spacing.xs, paddingVertical: 2 }} style={{ maxHeight: 90 }}>
+        <View style={styles.locContainer}>
           <View style={styles.locRow}>
-            <Ionicons name="ellipse" size={12} color={colors.brandPrimary} />
+            <Ionicons name="ellipse" size={10} color={colors.brandPrimary} />
             <Text style={styles.locTxt} numberOfLines={1}>{order.pickup?.address}</Text>
           </View>
           {order.stops?.map((s: any, idx: number) => (
             <View key={idx} style={styles.locRow}>
-              <Ionicons name="ellipse" size={12} color={colors.brandSecondary} />
+              <Ionicons name="ellipse" size={10} color={colors.brandSecondary} />
               <Text style={styles.locTxt} numberOfLines={1}>{s.address}</Text>
             </View>
           ))}
-        </ScrollView>
+        </View>
 
         {order?.status === "delivered" ? (
           <Pressable testID="rate-btn" onPress={onDelivered} style={styles.primaryBtn}>
@@ -159,27 +161,28 @@ const styles = StyleSheet.create({
   oidTxt: { fontSize: 12, fontWeight: "800", color: colors.onSurface },
   sheet: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg, gap: spacing.sm, ...shadow.cta },
   grabber: { alignSelf: "center", width: 40, height: 4, borderRadius: 2, backgroundColor: colors.divider, marginBottom: 2 },
-  statusBanner: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.surfaceTertiary, padding: spacing.md, borderRadius: radius.md },
+  statusBanner: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.surfaceTertiary, padding: spacing.sm, borderRadius: radius.md },
   statusIndicator: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.brandPrimary },
-  statusText: { fontSize: 14, fontWeight: "800", color: colors.onSurface },
-  riderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, padding: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.divider },
-  riderAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.surfaceSecondary },
-  riderName: { fontWeight: "800", color: colors.onSurface },
-  riderMeta: { fontSize: 12, color: colors.onSurfaceSecondary, marginTop: 2 },
-  roundBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brandPrimary, alignItems: "center", justifyContent: "center" },
-  timelineContainer: { marginTop: spacing.sm, marginBottom: spacing.xs },
-  timeline: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 4, height: 40 },
-  tlItem: { alignItems: "center", flexDirection: "row" },
-  tlDot: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
+  statusText: { fontSize: 13, fontWeight: "800", color: colors.onSurface },
+  riderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, padding: spacing.sm, borderRadius: radius.md, borderWidth: 1, borderColor: colors.divider },
+  riderAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surfaceSecondary },
+  riderName: { fontWeight: "800", color: colors.onSurface, fontSize: 13 },
+  riderMeta: { fontSize: 11, color: colors.onSurfaceSecondary, marginTop: 1 },
+  roundBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.brandPrimary, alignItems: "center", justifyContent: "center" },
+  timeline: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", paddingHorizontal: 2, marginVertical: 2 },
+  tlItem: { alignItems: "center", flex: 1 },
+  tlNodeRow: { flexDirection: "row", alignItems: "center", width: "100%", justifyContent: "center" },
+  tlDot: { width: 18, height: 18, borderRadius: 9, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center", zIndex: 2 },
   tlDotDone: { backgroundColor: colors.brandPrimary },
-  tlTxt: { fontSize: 9, color: colors.muted, position: "absolute", top: 24, width: 60, textAlign: "center", marginLeft: -19 },
+  tlTxt: { fontSize: 8, color: colors.muted, textAlign: "center", marginTop: 4, width: 55 },
   tlTxtDone: { color: colors.onSurface, fontWeight: "700" },
-  tlLine: { width: 20, height: 2, backgroundColor: colors.divider, marginHorizontal: 2 },
+  tlLine: { flex: 1, height: 2, backgroundColor: colors.divider, marginHorizontal: -4, zIndex: 1 },
   tlLineDone: { backgroundColor: colors.brandPrimary },
-  locRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: 2 },
-  locTxt: { fontSize: 13, color: colors.onSurface, flex: 1 },
-  primaryBtn: { marginTop: 4, backgroundColor: colors.brandPrimary, height: 48, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
-  primaryTxt: { fontWeight: "900", color: colors.onBrandPrimary },
-  cancelBtn: { marginTop: 4, height: 48, borderRadius: radius.md, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.error },
-  cancelTxt: { fontWeight: "800", color: colors.error },
+  locContainer: { gap: 4, paddingVertical: 2 },
+  locRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  locTxt: { fontSize: 12, color: colors.onSurface, flex: 1 },
+  primaryBtn: { backgroundColor: colors.brandPrimary, height: 46, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  primaryTxt: { fontWeight: "900", color: colors.onBrandPrimary, fontSize: 13 },
+  cancelBtn: { height: 46, borderRadius: radius.md, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.error },
+  cancelTxt: { fontWeight: "800", color: colors.error, fontSize: 13 },
 });
