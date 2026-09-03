@@ -145,7 +145,7 @@ export default function Home() {
                   <View style={styles.inputRow}>
                     <Pressable
                       testID="pickup-input"
-                      onPress={() => router.push({ pathname: "/location-picker", params: { type: "pickup" } })}
+                      onPress={() => router.push({ pathname: "/location-picker", params: { field: "pickup" } })}
                       style={[styles.inputPressable, { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, justifyContent: "center", backgroundColor: colors.surface }]}
                     >
                       <Text style={[styles.inputTxt, !draft.pickup.address && styles.placeholderText]} numberOfLines={1}>
@@ -173,7 +173,7 @@ export default function Home() {
                     <View style={styles.inputRow}>
                       <Pressable
                         testID={idx === 0 ? "dest-input" : `stop-${idx}-input`}
-                        onPress={() => router.push({ pathname: "/location-picker", params: { type: "stop", index: idx } })}
+                        onPress={() => router.push({ pathname: "/location-picker", params: { field: idx === 0 ? "stop-0" : `stop-${idx}` } })}
                         style={[styles.inputPressable, { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, height: 46, paddingHorizontal: spacing.md, justifyContent: "center", backgroundColor: colors.surface }]}
                       >
                         <Text style={[styles.inputTxt, !stop.address && styles.placeholderText]} numberOfLines={1}>
